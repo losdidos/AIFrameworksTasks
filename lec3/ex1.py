@@ -3,6 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+
 
 data = pd.read_csv('Country-data.csv')
 
@@ -23,20 +27,21 @@ print('Numerical Features :',*numerical_features)
 
 # Add what is needed (y, by and the title)
 
+groups = {
+    'Health': ['child_mort', 'health', 'life_expec', 'total_fer'],
+    'Trade': ['imports', 'exports'],
+    'Finance': ['income', 'inflation', 'gdpp'],
+}
 
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-
-health = ['child_mort', 'health', 'life_expec', 'total_fer']
-trade = ['imports', 'exports']
-finance = ['income', 'inflation', 'gdpp']
 
 compressed_data = pd.DataFrame()
 compressed_data['country'] = data['country']
-compressed_data['Health'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[health]))[:, 0]
-compressed_data['Trade'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[trade]))[:, 0]
-compressed_data['Finance'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[finance]))[:, 0]
+compressed_data['Health'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[groups['Health']]))[:, 0]
+compressed_data['Trade'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[groups['Trade']]))[:, 0]
+compressed_data['Finance'] = PCA(n_components=1).fit_transform(StandardScaler().fit_transform(data[groups['Finance']]))[:, 0]
+compressed_data.head()
 
-print(compressed_data.head())
 
 compressed_data.to_pickle('compressed_data.pkl')
+
+
